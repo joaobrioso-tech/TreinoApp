@@ -1,0 +1,1205 @@
+window.onerror = function(msg, src, line, col){
+  alert("Erro: " + msg + "\nLinha: " + line);
+};
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Treino 3x/semana • Saúde & Perda de Gordura</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0c10"/>
+
+  <style>
+    :root{
+      --bg:#0b0c10; --card:#11131a; --muted:#b6b6b6; --line:#222532;
+      --btn:#14161d; --btn2:#1e2a44; --danger:#3b1414;
+      --ok:#0f3b1d; --okb:#1f6b3a;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    body{margin:0;background:var(--bg);color:#e8e8e8;}
+    header{
+      position:sticky;top:0;z-index:10;
+      padding:14px 14px calc(14px + env(safe-area-inset-top));
+      background:rgba(11,12,16,.95);backdrop-filter:blur(6px);
+      border-bottom:1px solid var(--line);
+    }
+    h1{margin:0 0 6px;font-size:16px;line-height:1.2;}
+    .sub{font-size:12px;color:var(--muted);line-height:1.35}
+    main{max-width:980px;margin:0 auto;padding:12px 12px calc(20px + env(safe-area-inset-bottom));}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .btn{
+      border:1px solid #2a2d38;border-radius:14px;
+      padding:12px 14px;background:var(--btn);color:#e8e8e8;
+      font-size:14px;cursor:pointer; touch-action:manipulation;
+    }
+    .btn.primary{background:var(--btn2);border-color:#2b3a5f;}
+    .btn.ok{background:var(--ok);border-color:var(--okb);}
+    .btn.danger{background:var(--danger);border-color:#5a2222;}
+    .grid{display:grid;gap:10px;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(min-width:900px){ .grid2{grid-template-columns:repeat(4,1fr);} }
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;}
+    .card h2{margin:0 0 8px;font-size:15px;}
+    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;}
+    input,select,textarea{
+      width:100%;box-sizing:border-box;
+      background:#0e1016;border:1px solid #2a2d38;color:#e8e8e8;
+      padding:12px;border-radius:14px;font-size:15px;
+    }
+    textarea{min-height:86px;resize:vertical;}
+    .row{display:flex;gap:10px;flex-wrap:wrap;}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #2a2d38;background:#14161d;font-size:12px;color:#d7d7d7;}
+    .hr{height:1px;background:var(--line);margin:12px 0;}
+    .ex{
+      display:grid; grid-template-columns:92px 1fr; gap:10px;
+      padding:10px; border:1px solid var(--line); border-radius:18px; background:#0e1016;
+      margin-bottom:10px;
+    }
+    .ex img{
+      width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid #2a2d38;
+      background:#0b0c10;
+    }
+    .ex-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+    .muted{color:var(--muted);font-size:12px;line-height:1.3;}
+    .setrow{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap:8px;
+      margin-top:8px;
+    }
+    @media(max-width:520px){
+      .setrow{ grid-template-columns:1fr 1fr; }
+    }
+    .hint{font-size:12px;color:#9fb6ff;margin-top:6px;}
+    .historyItem{border:1px solid var(--line);background:#0e1016;border-radius:18px;padding:12px;margin-bottom:10px;}
+    .historyItem b{font-size:14px;}
+    canvas{width:100%;height:220px;background:#0e1016;border:1px solid var(--line);border-radius:18px;}
+    .stickyBottom{
+      position:sticky; bottom:0; z-index:9;
+      background:linear-gradient(180deg, rgba(11,12,16,0) 0%, rgba(11,12,16,.92) 30%, rgba(11,12,16,.98) 100%);
+      padding:10px 0 calc(10px + env(safe-area-inset-bottom));
+    }
+    .stickyBottom .row{justify-content:space-between;}
+    .smallNote{font-size:12px;color:#8f8f8f;line-height:1.35;}
+    .progress{
+      height:12px;border:1px solid #2a2d38;border-radius:999px;overflow:hidden;background:#0e1016;
+    }
+    .progress > div{height:100%;background:#9fb6ff;width:0%;}
+    .goalLine{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin:10px 0;}
+  </style>
+</head>
+
+<body>
+<button onclick="alert('JS OK')">TESTE JS</button>
+
+<header>
+  <h1>3x/semana • Full Body • Saúde & Perda de Gordura</h1>
+  <div class="sub">
+    Começa leve: <b>RPE 6–7</b> (3–4 reps na reserva). Aqui tens força + passos + cardio leve, com progressão automática.
+  </div>
+  <div class="tabs">
+    <button class="btn primary" id="tabLog">Treino</button>
+    <button class="btn" id="tabGoals">Objetivos</button>
+    <button class="btn" id="tabHistory">Histórico</button>
+    <button class="btn" id="tabStats">Análise</button>
+    <button class="btn" id="tabPlan">Plano</button>
+  </div>
+</header>
+
+<main>
+  <!-- TREINO -->
+  <section id="viewLog" class="grid">
+    <div class="card">
+      <h2>Configuração da sessão</h2>
+      <div class="grid2">
+        <div>
+          <label>Treino</label>
+          <select id="workoutSelect"></select>
+        </div>
+        <div>
+          <label>Local</label>
+          <select id="modeSelect">
+            <option value="gym">Ginásio</option>
+            <option value="home">Casa</option>
+          </select>
+        </div>
+        <div>
+          <label>Data</label>
+          <input id="dateInput" type="date"/>
+        </div>
+        <div>
+          <label>Duração (min)</label>
+          <input id="durationInput" type="number" min="15" max="150" value="55"/>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="grid2">
+        <div>
+          <label>Passos do dia (opcional)</label>
+          <input id="stepsInput" type="number" min="0" step="100" placeholder="ex.: 8000">
+        </div>
+        <div>
+          <label>Cardio pós-treino (min)</label>
+          <input id="cardioInput" type="number" min="0" max="60" value="10">
+        </div>
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        Cardio recomendado: <span class="pill">10–20 min zona 2</span> (caminhada inclinada/bicicleta) para saúde e gasto calórico sem te destruir.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Exercícios (carga por série)</h2>
+      <div id="exerciseList"></div>
+
+      <div class="stickyBottom">
+        <div class="row">
+          <button class="btn" id="loadLastBtn">Carregar última sessão</button>
+          <button class="btn ok" id="applySuggestBtn">Aplicar sugestões</button>
+          <button class="btn primary" id="saveSessionBtn">Guardar</button>
+        </div>
+        <div class="smallNote" style="margin-top:8px;">
+          Progressão automática por série: <b>Topo das reps + RPE ≤7</b> → sobe. <b>Reps abaixo do mínimo</b> ou <b>RPE ≥9</b> → baixa (~5%).
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <label>Notas</label>
+      <textarea id="notesInput" placeholder="Sono, stress, dores, técnica, etc."></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Exportar / Backup</h2>
+      <div class="row">
+        <button class="btn" id="exportBtn">Exportar CSV</button>
+        <button class="btn" id="exportJsonBtn">Exportar JSON</button>
+      </div>
+      <div style="height:10px"></div>
+      <label>Importar JSON</label>
+      <input id="importFile" type="file" accept="application/json"/>
+      <div class="hr"></div>
+      <button class="btn danger" id="clearBtn">Apagar tudo (local)</button>
+      <div class="smallNote" style="margin-top:10px;">Os dados ficam no teu dispositivo (LocalStorage). Exporta JSON para trocar de telemóvel.</div>
+    </div>
+  </section>
+
+  <!-- OBJETIVOS -->
+  <section id="viewGoals" class="grid" style="display:none;">
+    <div class="card">
+      <h2>Objetivos semanais (últimos 7 dias)</h2>
+      <div class="muted">Edita os objetivos e vê o progresso automaticamente com base nas sessões que registas.</div>
+      <div class="hr"></div>
+
+      <div class="grid2">
+        <div>
+          <label>Força (sessões/semana)</label>
+          <input id="goalStrength" type="number" min="0" max="14" value="3">
+        </div>
+        <div>
+          <label>Treinos em casa (mínimo/semana)</label>
+          <input id="goalHome" type="number" min="0" max="14" value="1">
+        </div>
+        <div>
+          <label>Cardio (min/semana)</label>
+          <input id="goalCardio" type="number" min="0" max="500" value="60">
+        </div>
+        <div>
+          <label>Passos (total/semana)</label>
+          <input id="goalSteps" type="number" min="0" step="1000" value="60000">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary" id="saveGoalsBtn">Guardar objetivos</button>
+      </div>
+
+      <div class="hr"></div>
+      <div id="goalsProgress"></div>
+
+      <div class="hr"></div>
+      <div class="muted">
+        Sugestão para perda de gordura/saúde: tenta subir passos de forma progressiva (ex.: +1000/dia por semana) e mantém 10–20 min zona 2 nos treinos.
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTÓRICO -->
+  <section id="viewHistory" class="card" style="display:none;">
+    <h2>Histórico</h2>
+    <div class="muted">Sessões guardadas (mais recentes primeiro).</div>
+    <div class="hr"></div>
+    <div id="historyList"></div>
+  </section>
+
+  <!-- ANÁLISE -->
+  <section id="viewStats" class="grid" style="display:none;">
+    <div class="card">
+      <h2>Análise</h2>
+      <div class="grid2">
+        <div>
+          <label>Exercício</label>
+          <select id="exerciseSelect"></select>
+        </div>
+        <div>
+          <label>Métrica</label>
+          <select id="metricSelect">
+            <option value="topWeight">Melhor carga (kg)</option>
+            <option value="volume">Volume (kg)</option>
+          </select>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+      <canvas id="chart" width="900" height="320"></canvas>
+      <div class="muted" id="chartHint" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Resumo</h2>
+      <div id="summaryBox" class="muted"></div>
+    </div>
+  </section>
+
+  <!-- PLANO -->
+  <section id="viewPlan" class="card" style="display:none;">
+    <h2>Plano + Objetivo (gordura/saúde)</h2>
+    <div class="muted">
+      3 dias de força (A/B/C) + 1 treino curto em casa + passos + cardio leve.
+    </div>
+    <div class="hr"></div>
+    <div id="planText"></div>
+  </section>
+</main>
+
+<script>
+  // ---------- DB ----------
+  const DB_KEY = "treino_app_v3";
+  const $ = (id)=>document.getElementById(id);
+  const todayISO = ()=> new Date().toISOString().slice(0,10);
+  const round = (x, step=0.5)=> Math.round(x/step)*step;
+
+  function loadDB(){
+    try{
+      const v = JSON.parse(localStorage.getItem(DB_KEY));
+      if(v && v.sessions) return v;
+      // migração simples se vinha de versões anteriores:
+      const old = JSON.parse(localStorage.getItem("treino_app_v2"));
+      if(old && old.sessions){
+        const migrated = { sessions: old.sessions, goals: defaultGoals() };
+        localStorage.setItem(DB_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
+      return { sessions:[], goals: defaultGoals() };
+    }catch{
+      return { sessions:[], goals: defaultGoals() };
+    }
+  }
+  function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+  function defaultGoals(){
+    return { strength:3, home:1, cardio:60, steps:60000 };
+  }
+
+  function setActiveTab(tab){
+    const views = ["Log","Goals","History","Stats","Plan"];
+    views.forEach(v=>{
+      $("view"+v).style.display = (v===tab) ? "" : "none";
+      $("tab"+v).classList.toggle("primary", v===tab);
+    });
+  }
+
+  // ---------- PLANO ----------
+  // NOTA: cada exercício tem alternativas ginásio/casa
+  const PLAN = {
+    "Treino A": [
+      {
+        key:"goblet_squat",
+        title:"Agachamento (regresso)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/6/6f/Goblet_squat.png",
+        target:{sets:3, repsMin:8, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Agachamento goblet","Agachamento guiado (Smith)","Leg press (leve)"],
+          home:["Agachamento com mochila","Agachamento a caixa (box squat)","Agachamento tempo (3s descida)"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"db_bench",
+        title:"Empurrar (peito)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/3/3e/Dumbbell_bench_press.png",
+        target:{sets:3, repsMin:8, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Supino com halteres","Chest press (máquina)","Supino guiado (leve)"],
+          home:["Flexões (joelhos se preciso)","Flexões inclinadas (mãos numa cadeira)","Press com elástico"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"row",
+        title:"Puxar (costas)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/8/8e/Seated_cable_row.png",
+        target:{sets:3, repsMin:10, repsMax:12, rest:"75–90s"},
+        variants:{
+          gym:["Remada sentada (cabo)","Remada halteres","Remada máquina"],
+          home:["Remada com elástico","Remada a uma mão com mochila","Remada invertida (mesa segura)"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"rdl",
+        title:"Cadeia posterior (leve)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/5/5f/Romanian_deadlift.png",
+        target:{sets:2, repsMin:10, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Peso morto romeno leve","Extensão lombar","Good morning muito leve"],
+          home:["RDL com mochila","Hip hinge com elástico","Ponte glúteo"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"lateral_raise",
+        title:"Ombro (saúde)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/2/2c/Lateral_raise.png",
+        target:{sets:2, repsMin:12, repsMax:15, rest:"60s"},
+        variants:{
+          gym:["Elevação lateral halteres","Elevação lateral máquina","Cabo lateral"],
+          home:["Elevação lateral garrafas","Elevação lateral elástico","Y-raise leve"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"plank",
+        title:"Core (tempo)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Plank_exercise.png",
+        target:{sets:2, repsMin:30, repsMax:45, rest:"60s", isTime:true},
+        variants:{
+          gym:["Prancha","Pallof press","Farmer carry leve"],
+          home:["Prancha","Dead bug","Bird dog"]
+        },
+        stepUpper:true
+      },
+    ],
+
+    "Treino B": [
+      {
+        key:"legpress",
+        title:"Pernas (seguro)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/1/1c/Leg_press.png",
+        target:{sets:3, repsMin:6, repsMax:8, rest:"120s"},
+        variants:{
+          gym:["Leg press","Trap bar deadlift leve","Agachamento guiado curto"],
+          home:["Agachamento mochila pesado","Step-up (cadeira firme)","Wall sit (tempo)"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"latpulldown",
+        title:"Costas (vertical)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/6/6e/Lat_pulldown.png",
+        target:{sets:3, repsMin:8, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Puxada na polia","Pull-up assistida","Pulldown neutro"],
+          home:["Puxada com elástico (porta segura)","Remada elástico alto","Pull-up (se tiver barra)"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"shoulder_press",
+        title:"Ombro (press)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/0/0e/Seated_shoulder_press.png",
+        target:{sets:2, repsMin:8, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Press militar sentado","Máquina ombro","Halteres sentado leve"],
+          home:["Press com elástico","Pike push-up (leve)","Halteres/garrafões"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"split_squat",
+        title:"Unilateral (equilíbrio)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/7/7e/Split_squat.png",
+        target:{sets:2, repsMin:8, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Split squat","Passada","Hack squat leve"],
+          home:["Split squat","Passada no lugar","Bulgarian (se tolerar)"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"biceps",
+        title:"Bíceps",
+        img:"https://upload.wikimedia.org/wikipedia/commons/4/4e/Dumbbell_bicep_curl.png",
+        target:{sets:2, repsMin:10, repsMax:12, rest:"60–75s"},
+        variants:{
+          gym:["Curl halteres","Curl máquina","Curl cabo"],
+          home:["Curl elástico","Curl mochila","Curl martelo garrafas"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"triceps",
+        title:"Tríceps",
+        img:"https://upload.wikimedia.org/wikipedia/commons/2/2e/Triceps_pushdown.png",
+        target:{sets:2, repsMin:10, repsMax:12, rest:"60–75s"},
+        variants:{
+          gym:["Tríceps na polia","Máquina tríceps","Extensão halter leve"],
+          home:["Tríceps elástico","Dips banco (leve)","Extensão acima da cabeça (mochila)"]
+        },
+        stepUpper:true
+      }
+    ],
+
+    "Treino C": [
+      {
+        key:"squat_variant",
+        title:"Agachamento (variante confortável)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Barbell_squat.png",
+        target:{sets:3, repsMin:8, repsMax:8, rest:"90s"},
+        variants:{
+          gym:["Agachamento guiado leve","Hack squat leve","Leg press pés altos"],
+          home:["Agachamento mochila","Agachamento a caixa","Agachamento tempo"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"incline_press",
+        title:"Empurrar (inclinado)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/9/9c/Incline_dumbbell_press.png",
+        target:{sets:3, repsMin:8, repsMax:10, rest:"90s"},
+        variants:{
+          gym:["Supino inclinado halteres","Máquina inclinado","Cabo press inclinado"],
+          home:["Flexões normais","Flexões inclinadas","Press com elástico"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"one_arm_row",
+        title:"Remada unilateral",
+        img:"https://upload.wikimedia.org/wikipedia/commons/5/5c/One-arm_dumbbell_row.png",
+        target:{sets:3, repsMin:10, repsMax:10, rest:"75–90s"},
+        variants:{
+          gym:["Remada unilateral halter","Remada máquina unilateral","Remada cabo unilateral"],
+          home:["Remada mochila 1 braço","Remada elástico 1 braço","Remada invertida"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"hip_thrust",
+        title:"Glúteo (saúde lombar)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Hip_thrust.png",
+        target:{sets:2, repsMin:10, repsMax:12, rest:"90s"},
+        variants:{
+          gym:["Hip thrust","Glute bridge","Máquina glúteo"],
+          home:["Ponte glúteo","Hip thrust no sofá","Ponte 1 perna (leve)"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"face_pull",
+        title:"Postura (ombro)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/9/9e/Face_pull.png",
+        target:{sets:2, repsMin:12, repsMax:15, rest:"60s"},
+        variants:{
+          gym:["Face pull","Rear delt machine","Cabo alto (leve)"],
+          home:["Face pull elástico","Pull-aparts elástico","Y-T-W leve"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"dead_bug",
+        title:"Core (controlo)",
+        img:"https://upload.wikimedia.org/wikipedia/commons/8/8a/Dead_bug_exercise.png",
+        target:{sets:2, repsMin:8, repsMax:10, rest:"60s"},
+        variants:{
+          gym:["Dead bug","Pallof press","Cable chop leve"],
+          home:["Dead bug","Bird dog","Side plank (leve)"]
+        },
+        stepUpper:true
+      }
+    ],
+
+    // ✅ NOVO: treino casa curto (15–25 min) — circuito
+    "Treino Casa (15–25 min)": [
+      {
+        key:"home_squat",
+        title:"Circuito: pernas",
+        img:"https://upload.wikimedia.org/wikipedia/commons/6/6f/Goblet_squat.png",
+        target:{sets:3, repsMin:10, repsMax:15, rest:"30–60s"},
+        variants:{
+          gym:["(Se fizer no ginásio) Leg press leve","Agachamento goblet"],
+          home:["Agachamento mochila","Step-up (cadeira firme)","Agachamento tempo (3s)"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"home_push",
+        title:"Circuito: empurrar",
+        img:"https://upload.wikimedia.org/wikipedia/commons/3/3e/Dumbbell_bench_press.png",
+        target:{sets:3, repsMin:8, repsMax:15, rest:"30–60s"},
+        variants:{
+          gym:["Chest press leve","Supino halteres leve"],
+          home:["Flexões inclinadas","Flexões","Press elástico"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"home_pull",
+        title:"Circuito: puxar",
+        img:"https://upload.wikimedia.org/wikipedia/commons/8/8e/Seated_cable_row.png",
+        target:{sets:3, repsMin:10, repsMax:15, rest:"30–60s"},
+        variants:{
+          gym:["Remada cabo leve","Puxada polia leve"],
+          home:["Remada elástico","Remada mochila","Remada invertida (segura)"]
+        },
+        stepUpper:true
+      },
+      {
+        key:"home_hinge",
+        title:"Circuito: glúteo/posterior",
+        img:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Hip_thrust.png",
+        target:{sets:3, repsMin:10, repsMax:15, rest:"30–60s"},
+        variants:{
+          gym:["Hip thrust leve","Extensão lombar leve"],
+          home:["Ponte glúteo","Hip thrust no sofá","RDL mochila leve"]
+        },
+        stepUpper:false
+      },
+      {
+        key:"home_core",
+        title:"Circuito: core",
+        img:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Plank_exercise.png",
+        target:{sets:3, repsMin:30, repsMax:45, rest:"30–60s", isTime:true},
+        variants:{
+          gym:["Prancha","Pallof press leve"],
+          home:["Prancha","Dead bug","Side plank leve"]
+        },
+        stepUpper:true
+      }
+    ]
+  };
+
+  // ---------- Progressão automática (por série) ----------
+  // Regras seguras:
+  // - Se reps >= repsMax e RPE <=7 → subir
+  // - Se reps < repsMin OU RPE >=9 → baixar ~5%
+  // - Caso contrário → manter
+  function suggestNextWeightForSet(ex, lastSet){
+    const w = Number(lastSet?.weight);
+    if(!isFinite(w) || w<=0) return {suggested:null, reason:"Sem carga anterior nesta série."};
+
+    const t = ex.target;
+    const reps = Number(lastSet?.reps);
+    const rpe  = Number(lastSet?.rpe);
+
+    const repsMin = t.repsMin;
+    const repsMax = t.repsMax;
+
+    const tooHard =
+      (isFinite(reps) && reps < repsMin) ||
+      (isFinite(rpe) && rpe >= 9);
+
+    const tooEasy =
+      (isFinite(reps) && reps >= repsMax) &&
+      (isFinite(rpe) && rpe <= 7);
+
+    if(tooHard){
+      return {suggested: round(w * 0.95, 0.5), reason:"Baixar (~5%) — reps baixas ou RPE alto."};
+    }
+    if(tooEasy){
+      const isUpper = ex.stepUpper;
+      const inc = isUpper ? Math.max(1, w*0.02) : Math.max(2.5, w*0.025);
+      return {suggested: round(w + inc, 0.5), reason:"Subir — topo de reps com RPE ≤7."};
+    }
+    return {suggested: round(w, 0.5), reason:"Manter — boa margem/controlo."};
+  }
+
+  function getLastByExercise(db, exKey){
+    const sessions = [...db.sessions].sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+    for(const s of sessions){
+      const e = s.exercises?.find(x=>x.key===exKey);
+      if(e) return e;
+    }
+    return null;
+  }
+
+  // ---------- Render ----------
+  function buildWorkoutSelect(){
+    $("workoutSelect").innerHTML = Object.keys(PLAN).map(k=>`<option>${k}</option>`).join("");
+  }
+
+  function exerciseCard(ex, mode, db){
+    // se o treino for "Treino Casa", força home no dropdown (mas ainda deixo o modo geral)
+    const variants = ex.variants[mode] || ex.variants.home || [];
+    const lastEx = getLastByExercise(db, ex.key);
+
+    // sugestões por série (se houver last)
+    const hints = Array.from({length: ex.target.sets}, (_,i)=>{
+      const lastSet = lastEx?.sets?.[i];
+      return lastSet ? suggestNextWeightForSet(ex, lastSet) : {suggested:null, reason:""};
+    });
+
+    const setsHtml = Array.from({length: ex.target.sets}, (_,i)=>`
+      <div class="setrow">
+        <div>
+          <label>Série ${i+1} • Carga (kg)</label>
+          <input inputmode="decimal" type="number" min="0" step="0.5"
+                 data-ex="${ex.key}" data-field="weight" data-set="${i}"
+                 placeholder="kg">
+          <div class="hint">${hints[i].suggested!=null ? `Sug: <b>${hints[i].suggested} kg</b>` : ""}</div>
+        </div>
+        <div>
+          <label>Reps${ex.target.isTime ? " (seg)" : ""}</label>
+          <input inputmode="numeric" type="number" min="0" step="1"
+                 data-ex="${ex.key}" data-field="reps" data-set="${i}">
+        </div>
+        <div>
+          <label>RPE</label>
+          <input inputmode="decimal" type="number" min="1" max="10" step="0.5"
+                 data-ex="${ex.key}" data-field="rpe" data-set="${i}">
+        </div>
+        <div>
+          <label>Notas</label>
+          <input type="text" placeholder="ex.: técnica"
+                 data-ex="${ex.key}" data-field="note" data-set="${i}">
+        </div>
+      </div>
+    `).join("");
+
+    const repLabel = ex.target.isTime
+      ? `${ex.target.repsMin}–${ex.target.repsMax} seg`
+      : `${ex.target.repsMin}–${ex.target.repsMax} reps`;
+
+    return `
+      <div class="ex" data-excard="${ex.key}">
+        <img src="${ex.img}" alt="${ex.title}" onerror="this.style.display='none'">
+        <div>
+          <div class="ex-title">${ex.title}</div>
+          <div class="muted">
+            <span class="pill">${ex.target.sets} séries</span>
+            <span class="pill">${repLabel}</span>
+            <span class="pill">Desc: ${ex.target.rest}</span>
+          </div>
+
+          <div style="margin-top:10px">
+            <label>Escolha (modo ${mode==="gym"?"Ginásio":"Casa"})</label>
+            <select data-ex="${ex.key}" data-field="variant">
+              ${variants.map(v=>`<option>${v}</option>`).join("")}
+            </select>
+            <div class="muted" style="margin-top:6px;">
+              Dica: mantém tudo confortável (RPE 6–7) nas primeiras semanas.
+            </div>
+          </div>
+
+          ${setsHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderExercises(){
+    const db = loadDB();
+    const w = $("workoutSelect").value;
+    const mode = $("modeSelect").value;
+
+    // se selecionares o treino casa, muda automaticamente o modo para casa (mas não bloqueia)
+    if(w === "Treino Casa (15–25 min)"){
+      $("modeSelect").value = "home";
+    }
+
+    const actualMode = $("modeSelect").value;
+    $("exerciseList").innerHTML = PLAN[w].map(ex=>exerciseCard(ex, actualMode, db)).join("");
+    refreshExerciseDropdown();
+  }
+
+  function refreshExerciseDropdown(){
+    const all = Object.values(PLAN).flat().map(e=>({key:e.key,title:e.title}));
+    const uniq = [];
+    const seen = new Set();
+    for(const e of all){
+      if(!seen.has(e.key)){ seen.add(e.key); uniq.push(e); }
+    }
+    $("exerciseSelect").innerHTML = uniq.map(e=>`<option value="${e.key}">${e.title}</option>`).join("");
+  }
+
+  // ---------- Ler / preencher sessão ----------
+  function readFormToSession(){
+    const workout = $("workoutSelect").value;
+    const mode = $("modeSelect").value;
+    const date = $("dateInput").value || todayISO();
+
+    const exs = PLAN[workout].map(ex=>{
+      const variantEl = document.querySelector(`[data-ex="${ex.key}"][data-field="variant"]`);
+      const sets = Array.from({length: ex.target.sets}, (_,i)=>{
+        const w = document.querySelector(`[data-ex="${ex.key}"][data-field="weight"][data-set="${i}"]`)?.value ?? "";
+        const reps = document.querySelector(`[data-ex="${ex.key}"][data-field="reps"][data-set="${i}"]`)?.value ?? "";
+        const rpe  = document.querySelector(`[data-ex="${ex.key}"][data-field="rpe"][data-set="${i}"]`)?.value ?? "";
+        const note = document.querySelector(`[data-ex="${ex.key}"][data-field="note"][data-set="${i}"]`)?.value ?? "";
+        return {
+          weight: w===""?null:Number(w),
+          reps: reps===""?null:Number(reps),
+          rpe: rpe===""?null:Number(rpe),
+          note
+        };
+      });
+      return { key: ex.key, title: ex.title, variant: variantEl?.value ?? "", sets };
+    });
+
+    return {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2),
+      workout, mode, date,
+      duration: Number($("durationInput").value)||null,
+      steps: $("stepsInput").value===""?null:Number($("stepsInput").value),
+      cardioMin: Number($("cardioInput").value)||0,
+      notes: $("notesInput").value || "",
+      exercises: exs
+    };
+  }
+
+  function fillSessionToForm(session){
+    $("workoutSelect").value = session.workout;
+    $("modeSelect").value = session.mode;
+    $("dateInput").value = session.date;
+    $("durationInput").value = session.duration ?? 55;
+    $("stepsInput").value = session.steps ?? "";
+    $("cardioInput").value = session.cardioMin ?? 10;
+    $("notesInput").value = session.notes ?? "";
+
+    renderExercises();
+
+    for(const ex of session.exercises || []){
+      const variantEl = document.querySelector(`[data-ex="${ex.key}"][data-field="variant"]`);
+      if(variantEl && ex.variant) variantEl.value = ex.variant;
+
+      (ex.sets||[]).forEach((s,i)=>{
+        const wEl = document.querySelector(`[data-ex="${ex.key}"][data-field="weight"][data-set="${i}"]`);
+        const repsEl = document.querySelector(`[data-ex="${ex.key}"][data-field="reps"][data-set="${i}"]`);
+        const rpeEl  = document.querySelector(`[data-ex="${ex.key}"][data-field="rpe"][data-set="${i}"]`);
+        const noteEl = document.querySelector(`[data-ex="${ex.key}"][data-field="note"][data-set="${i}"]`);
+        if(wEl) wEl.value = (s.weight ?? "");
+        if(repsEl) repsEl.value = (s.reps ?? "");
+        if(rpeEl)  rpeEl.value  = (s.rpe ?? "");
+        if(noteEl) noteEl.value = (s.note ?? "");
+      });
+    }
+  }
+
+  function loadLastForWorkout(){
+    const db = loadDB();
+    const workout = $("workoutSelect").value;
+    const mode = $("modeSelect").value;
+    const list = db.sessions
+      .filter(s=>s.workout===workout)
+      .sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+    if(!list.length){
+      alert("Ainda não há sessões deste treino.");
+      return;
+    }
+    const last = list[0];
+    fillSessionToForm({...last, mode}); // mantém modo atual
+  }
+
+  function applySuggestions(){
+    const db = loadDB();
+    const workout = $("workoutSelect").value;
+
+    for(const ex of PLAN[workout]){
+      const lastEx = getLastByExercise(db, ex.key);
+      if(!lastEx) continue;
+
+      for(let i=0;i<ex.target.sets;i++){
+        const lastSet = lastEx.sets?.[i];
+        if(!lastSet) continue;
+
+        const sug = suggestNextWeightForSet(ex, lastSet);
+        if(sug.suggested==null) continue;
+
+        const wEl = document.querySelector(`[data-ex="${ex.key}"][data-field="weight"][data-set="${i}"]`);
+        if(wEl && (wEl.value==="" || Number(wEl.value)===Number(lastSet.weight))){
+          wEl.value = sug.suggested;
+        }
+      }
+    }
+
+    alert("Sugestões aplicadas por série (onde havia histórico).");
+  }
+
+  // ---------- Histórico / Export ----------
+  window.__openSession = (id)=>{
+    const db = loadDB();
+    const s = db.sessions.find(x=>x.id===id);
+    if(!s) return;
+    fillSessionToForm(s);
+    setActiveTab("Log");
+  };
+  window.__deleteSession = (id)=>{
+    const db = loadDB();
+    db.sessions = db.sessions.filter(x=>x.id!==id);
+    saveDB(db);
+    renderHistory(); renderExercises(); renderStats(); renderGoalsProgress();
+  };
+
+  function renderHistory(){
+    const db = loadDB();
+    const sessions = [...db.sessions].sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+    if(!sessions.length){
+      $("historyList").innerHTML = `<div class="muted">Sem sessões ainda.</div>`;
+      return;
+    }
+    $("historyList").innerHTML = sessions.map(s=>{
+      const vol = (s.exercises||[]).reduce((acc,e)=>{
+        return acc + (e.sets||[]).reduce((a,st)=>{
+          const w = Number(st.weight)||0;
+          const r = Number(st.reps)||0;
+          return a + (w*r);
+        },0);
+      },0);
+      return `
+        <div class="historyItem">
+          <b>${s.workout}</b> <span class="pill">${s.mode==="gym"?"Ginásio":"Casa"}</span><br>
+          <div class="muted">${s.date} • ${s.duration ?? "—"} min • Cardio ${s.cardioMin ?? 0} min • Passos ${s.steps ?? "—"}</div>
+          <div class="muted">Volume (aprox): ${Math.round(vol)} kg</div>
+          <div style="margin-top:8px" class="row">
+            <button class="btn" onclick="window.__openSession('${s.id}')">Abrir</button>
+            <button class="btn danger" onclick="window.__deleteSession('${s.id}')">Apagar</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function exportCSV(){
+    const db = loadDB();
+    const rows = [];
+    rows.push(["date","workout","mode","duration","steps","cardioMin","exerciseKey","exerciseTitle","variant","setIndex","weight","reps","rpe","note","sessionNotes"].join(","));
+    for(const s of db.sessions){
+      for(const e of (s.exercises||[])){
+        (e.sets||[]).forEach((st,i)=>{
+          rows.push([
+            s.date, s.workout, s.mode, s.duration??"", s.steps??"", s.cardioMin??"",
+            e.key, e.title, (e.variant||"").replaceAll(","," "),
+            i+1,
+            st.weight??"", st.reps??"", st.rpe??"",
+            (st.note||"").replaceAll(","," "),
+            (s.notes||"").replaceAll(","," ")
+          ].join(","));
+        });
+      }
+    }
+    const blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "treinos.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportJSON(){
+    const db = loadDB();
+    const blob = new Blob([JSON.stringify(db,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "treinos_backup.json"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importJSON(file){
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const data = JSON.parse(reader.result);
+        if(!data.sessions) throw new Error("Formato inválido (falta sessions).");
+        if(!data.goals) data.goals = defaultGoals();
+        saveDB(data);
+        alert("Importado com sucesso.");
+        renderHistory(); renderExercises(); renderStats(); renderGoalsFromDB(); renderGoalsProgress();
+      }catch(e){
+        alert("Erro a importar: " + e.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ---------- Objetivos semanais ----------
+  function startOfDayISO(d){
+    const x = new Date(d);
+    x.setHours(0,0,0,0);
+    return x;
+  }
+  function daysAgo(n){
+    const d = new Date();
+    d.setDate(d.getDate()-n);
+    d.setHours(0,0,0,0);
+    return d;
+  }
+  function isInLast7Days(dateISO){
+    const d = startOfDayISO(dateISO);
+    return d >= daysAgo(6) && d <= daysAgo(0);
+  }
+
+  function renderGoalsFromDB(){
+    const db = loadDB();
+    const g = db.goals || defaultGoals();
+    $("goalStrength").value = g.strength ?? 3;
+    $("goalHome").value = g.home ?? 1;
+    $("goalCardio").value = g.cardio ?? 60;
+    $("goalSteps").value = g.steps ?? 60000;
+  }
+
+  function saveGoals(){
+    const db = loadDB();
+    db.goals = {
+      strength: Number($("goalStrength").value)||0,
+      home: Number($("goalHome").value)||0,
+      cardio: Number($("goalCardio").value)||0,
+      steps: Number($("goalSteps").value)||0
+    };
+    saveDB(db);
+    alert("Objetivos guardados ✅");
+    renderGoalsProgress();
+  }
+
+  function pct(a,b){
+    if(b<=0) return 100;
+    return Math.max(0, Math.min(100, Math.round((a/b)*100)));
+  }
+
+  function goalBlock(title, done, target, suffix=""){
+    const p = pct(done, target);
+    return `
+      <div class="goalLine">
+        <div>
+          <div><b>${title}</b> <span class="muted">(${done}${suffix} / ${target}${suffix})</span></div>
+          <div class="progress"><div style="width:${p}%"></div></div>
+        </div>
+        <div class="pill">${p}%</div>
+      </div>
+    `;
+  }
+
+  function renderGoalsProgress(){
+    const db = loadDB();
+    const g = db.goals || defaultGoals();
+
+    const last7 = db.sessions.filter(s=>s.date && isInLast7Days(s.date));
+    const strengthCount = last7.length;
+    const homeCount = last7.filter(s=>s.mode==="home").length;
+    const cardioMin = last7.reduce((a,s)=> a + (Number(s.cardioMin)||0), 0);
+    const stepsTotal = last7.reduce((a,s)=> a + (Number(s.steps)||0), 0);
+
+    const html = []
+    html.push(goalBlock("Força (sessões)", strengthCount, g.strength));
+    html.push(goalBlock("Treinos em casa", homeCount, g.home));
+    html.push(goalBlock("Cardio (min)", cardioMin, g.cardio, " min"));
+    html.push(goalBlock("Passos (total)", stepsTotal, g.steps));
+
+    html.push(`<div class="hr"></div>`);
+    html.push(`<div class="muted">
+      Janela: <b>últimos 7 dias</b> (inclui hoje).<br>
+      Se não registares passos em todas as sessões, o total fica subestimado — podes meter os passos sempre que souberes.
+    </div>`);
+
+    $("goalsProgress").innerHTML = html.join("");
+  }
+
+  // ---------- Stats ----------
+  function getSeriesForExercise(exKey){
+    const db = loadDB();
+    const sessions = [...db.sessions].sort((a,b)=> (a.date||"").localeCompare(b.date||""));
+    const pts = [];
+    for(const s of sessions){
+      const e = s.exercises?.find(x=>x.key===exKey);
+      if(!e) continue;
+
+      const setWeights = (e.sets||[]).map(st=>Number(st.weight)||0);
+      const topWeight = setWeights.length ? Math.max(...setWeights) : 0;
+
+      const volume = (e.sets||[]).reduce((acc,st)=>{
+        const w = Number(st.weight)||0;
+        const r = Number(st.reps)||0;
+        return acc + (w*r);
+      },0);
+
+      pts.push({date:s.date, topWeight, volume});
+    }
+    return pts;
+  }
+
+  function drawChart(points, metric){
+    const c = $("chart");
+    const ctx = c.getContext("2d");
+    ctx.clearRect(0,0,c.width,c.height);
+
+    if(points.length<2){
+      ctx.fillStyle = "#b6b6b6";
+      ctx.font = "16px system-ui";
+      ctx.fillText("Ainda não há dados suficientes.", 20, 40);
+      return;
+    }
+
+    const pad = 40;
+    const ys = points.map(p=> Number(p[metric])||0);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const spanY = (maxY - minY) || 1;
+
+    // axes
+    ctx.strokeStyle = "#2a2d38";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pad, pad);
+    ctx.lineTo(pad, c.height-pad);
+    ctx.lineTo(c.width-pad, c.height-pad);
+    ctx.stroke();
+
+    // line
+    ctx.strokeStyle = "#9fb6ff";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    points.forEach((p,i)=>{
+      const x = pad + (i*( (c.width-2*pad)/(points.length-1) ));
+      const y = (c.height-pad) - (( (Number(p[metric])||0) - minY)/spanY)*(c.height-2*pad);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // labels
+    ctx.fillStyle = "#b6b6b6";
+    ctx.font = "12px system-ui";
+    ctx.fillText(points[0].date, pad, c.height-12);
+    ctx.fillText(points[points.length-1].date, c.width-pad-90, c.height-12);
+    ctx.fillText(String(Math.round(maxY)), 6, pad+4);
+    ctx.fillText(String(Math.round(minY)), 6, c.height-pad);
+  }
+
+  function renderStats(){
+    const exKey = $("exerciseSelect").value;
+    const metric = $("metricSelect").value;
+    const pts = getSeriesForExercise(exKey);
+    drawChart(pts, metric);
+    $("chartHint").textContent = metric==="topWeight"
+      ? "Maior carga usada em alguma série, por sessão."
+      : "Volume por sessão (soma de kg×reps).";
+
+    const db = loadDB();
+    const totalSessions = db.sessions.length;
+    const last = [...db.sessions].sort((a,b)=>(b.date||"").localeCompare(a.date||""))[0];
+    const avgCardio = totalSessions ? Math.round(db.sessions.reduce((a,s)=>a+(Number(s.cardioMin)||0),0)/totalSessions) : 0;
+    const avgDur = totalSessions ? Math.round(db.sessions.reduce((a,s)=>a+(Number(s.duration)||0),0)/totalSessions) : 0;
+
+    $("summaryBox").innerHTML = `
+      <div class="pill">Sessões: ${totalSessions}</div>
+      <div class="pill">Duração média: ${avgDur} min</div>
+      <div class="pill">Cardio médio: ${avgCardio} min</div>
+      <div style="margin-top:10px" class="muted">
+        Última sessão: ${last ? (last.date + " • " + last.workout) : "—"}<br>
+        Para perder gordura sem stress: consistência + passos + zona 2.
+      </div>
+    `;
+  }
+
+  // ---------- Plano text ----------
+  function renderPlanText(){
+    const html = [];
+    html.push(`<div class="pill">A/B/C ginásio</div> <div class="pill">+ treino casa curto</div> <div class="pill">+ passos</div> <div class="pill">+ cardio leve</div>`);
+    html.push(`<div class="hr"></div>`);
+    html.push(`<div class="muted">
+      <b>Estrutura semanal (exemplo):</b><br>
+      • Seg: Treino A (ginásio) + 10–20 min zona 2<br>
+      • Qua: Treino B (ginásio) + 10–20 min zona 2<br>
+      • Sex: Treino C (ginásio) + 10–20 min zona 2<br>
+      • 1 dia extra (opcional): <b>Treino Casa (15–25 min)</b> ou caminhada 30–45 min<br><br>
+
+      <b>Regresso seguro:</b><br>
+      • Primeiras 2–3 semanas: show de técnica, nada de falhar reps.<br>
+      • Se uma variante incomodar: escolhe outra opção (máquina/elástico/leve).<br><br>
+
+      <b>Perda de gordura/saúde:</b><br>
+      • Passos: tenta subir gradualmente para 8k–12k/dia.<br>
+      • Cardio: zona 2 consistente &gt; HIIT esporádico (neste regresso).<br>
+    </div>`);
+    $("planText").innerHTML = html.join("");
+  }
+
+  // ---------- Eventos / init ----------
+  function init(){
+    buildWorkoutSelect();
+    $("dateInput").value = todayISO();
+
+    // tabs
+    $("tabLog").onclick = ()=> setActiveTab("Log");
+    $("tabGoals").onclick = ()=>{ setActiveTab("Goals"); renderGoalsFromDB(); renderGoalsProgress(); };
+    $("tabHistory").onclick = ()=>{ setActiveTab("History"); renderHistory(); };
+    $("tabStats").onclick = ()=>{ setActiveTab("Stats"); renderStats(); };
+    $("tabPlan").onclick = ()=>{ setActiveTab("Plan"); renderPlanText(); };
+
+    // controls
+    $("workoutSelect").onchange = ()=> renderExercises();
+    $("modeSelect").onchange = ()=> renderExercises();
+
+    $("loadLastBtn").onclick = loadLastForWorkout;
+    $("applySuggestBtn").onclick = applySuggestions;
+
+    $("saveSessionBtn").onclick = ()=>{
+      const db = loadDB();
+      const session = readFormToSession();
+      db.sessions.push(session);
+      saveDB(db);
+      alert("Sessão guardada ✅");
+      renderHistory(); renderStats(); renderExercises(); renderGoalsProgress();
+    };
+
+    $("exportBtn").onclick = exportCSV;
+    $("exportJsonBtn").onclick = exportJSON;
+    $("importFile").onchange = (e)=>{ if(e.target.files?.[0]) importJSON(e.target.files[0]); };
+
+    $("clearBtn").onclick = ()=>{
+      if(confirm("Apagar todos os dados locais?")){
+        localStorage.removeItem(DB_KEY);
+        renderHistory(); renderExercises(); renderStats();
+        renderGoalsFromDB(); renderGoalsProgress();
+      }
+    };
+
+    $("saveGoalsBtn").onclick = saveGoals;
+
+    $("exerciseSelect").onchange = renderStats;
+    $("metricSelect").onchange = renderStats;
+
+    // first render
+    renderGoalsFromDB();
+    renderExercises();
+    renderHistory();
+    renderStats();
+    renderGoalsProgress();
+    renderPlanText();
+
+    // PWA
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("sw.js").catch(()=>{});
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
+
+// --- guardrails: evita crash silencioso ---
+window.onerror = function(msg, src, line, col){
+  alert("Erro na app: " + msg + "\nLinha: " + line);
+};
+
+// --- se por algum motivo o select não ficou com opções, força ---
+(function forceWorkouts(){
+  try{
+    var keys = Object.keys(PLAN || {});
+    var sel = document.getElementById("workoutSelect");
+    if(sel && (!sel.options || sel.options.length === 0) && keys.length){
+      sel.innerHTML = keys.map(function(k){ return "<option>"+k+"</option>"; }).join("");
+      sel.value = keys[0];
+    }
+  }catch(e){}
+})();
